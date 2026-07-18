@@ -1,1 +1,8 @@
+body {
+    background-image: url('assets/backrounds/pexels-andreas-schnabl-1775843-19487036.jpg');
+    background-size: cover;                  
+    background-repeat: no-repeat;            
+    background-position: center;              
+    background-attachment: fixed;            
+}
 
