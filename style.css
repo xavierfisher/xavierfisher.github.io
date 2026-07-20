@@ -3,5 +3,5 @@ body {
     background-size: cover; /* Forces the image to fill the screen */
     background-position: center; /* Centers the image */
     background-repeat: no-repeat; /* Prevents the image from repeating */
-    background-attachment: fixed; /* Optional: keeps background static while scrolling */
+    background-attachment: fixed; /* Optional: keeps background static whi le scrolling */
 }
