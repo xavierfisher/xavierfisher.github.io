@@ -1,5 +1,5 @@
 body {
-    background-image: url('assets/backrounds/perfect_hue_20.jpg'); /* Path to your image */
+    background-image: url('../backrounds/perfect_hue_20.jpg'); /* Path to your image */
     background-size: cover; /* Forces the image to fill the screen */
     background-position: center; /* Centers the image */
     background-repeat: no-repeat; /* Prevents the image from repeating */
