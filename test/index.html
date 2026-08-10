@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Countdown Timer</title>
+    <title>Countdown Timer with Custom Sound</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -32,36 +32,35 @@
         const timerDisplay = document.getElementById('timer');
         const startBtn = document.getElementById('startBtn');
         
-        let timeLeft = 10; // Countdown starting number in seconds
+        let timeLeft = 10; 
         let countdownInterval;
 
-        // Function to create a short "tick" sound using the browser's audio
+        // 1. Load your custom audio file
+        const tickSound = new Audio('assets/ezgif-10be97e5f44ce11c_looped_looped (edited with Audjust).mp3');
+
         function playTickSound() {
-            const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            const oscillator = audioCtx.createOscillator();
-            const gainNode = audioCtx.createGain();
-
-            oscillator.type = 'sine'; // Sound wave type
-            oscillator.frequency.setValueAtTime(800, audioCtx.currentTime); // Pitch (Hz)
+            // Reset the audio to the beginning in case the last tick hasn't finished playing
+            tickSound.currentTime = 0; 
             
-            // Quick fade out so it sounds like a sharp click/tick
-            gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
-            gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.05);
-
-            oscillator.connect(gainNode);
-            gainNode.connect(audioCtx.destination);
-
-            oscillator.start();
-            oscillator.stop(audioCtx.currentTime + 0.05);
+            // Play the sound
+            tickSound.play().catch(error => {
+                console.log("Audio playback failed:", error);
+            });
         }
 
         function startCountdown() {
-            startBtn.disabled = true; // Disable button once started
+            startBtn.disabled = true; 
             
+            // Play immediately on start click, then let setInterval take over
+            playTickSound(); 
+
             countdownInterval = setInterval(() => {
                 timeLeft--;
                 timerDisplay.textContent = timeLeft;
-                playTickSound();
+                
+                if (timeLeft >= 0) {
+                    playTickSound();
+                }
 
                 if (timeLeft <= 0) {
                     clearInterval(countdownInterval);
