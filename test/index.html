@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Countdown Timer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 20vh;
+            background-color: #f4f4f4;
+        }
+        #timer {
+            font-size: 5rem;
+            font-weight: bold;
+            color: #333;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="timer">10</div>
+    <button id="startBtn">Start Countdown</button>
+
+    <script>
+        const timerDisplay = document.getElementById('timer');
+        const startBtn = document.getElementById('startBtn');
+        
+        let timeLeft = 10; // Countdown starting number in seconds
+        let countdownInterval;
+
+        // Function to create a short "tick" sound using the browser's audio
+        function playTickSound() {
+            const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+
+            oscillator.type = 'sine'; // Sound wave type
+            oscillator.frequency.setValueAtTime(800, audioCtx.currentTime); // Pitch (Hz)
+            
+            // Quick fade out so it sounds like a sharp click/tick
+            gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.05);
+
+            oscillator.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+
+            oscillator.start();
+            oscillator.stop(audioCtx.currentTime + 0.05);
+        }
+
+        function startCountdown() {
+            startBtn.disabled = true; // Disable button once started
+            
+            countdownInterval = setInterval(() => {
+                timeLeft--;
+                timerDisplay.textContent = timeLeft;
+                playTickSound();
+
+                if (timeLeft <= 0) {
+                    clearInterval(countdownInterval);
+                    timerDisplay.textContent = "Time's up!";
+                }
+            }, 1000);
+        }
+
+        startBtn.addEventListener('click', startCountdown);
+    </script>
+
+</body>
+</html>
