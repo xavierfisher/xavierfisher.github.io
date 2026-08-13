@@ -1,1 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Month Countdown</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; display:flex;align-items:center;justify-content:center;height:100vh;margin:0;background:#111;color:#eaeaea;}
+    .card{background:#121212;border-radius:12px;padding:28px;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,.6)}
+    .time{font-size:2rem;letter-spacing:.02em}
+    button{margin-top:16px;padding:10px 14px;border-radius:8px;border:0;background:#0b84ff;color:#fff;cursor:pointer}
+    small{display:block;margin-top:8px;color:#9aa}    
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Month countdown</h1>
+    <div id="count" class="time">-- days --:--:--:--</div>
+    <button id="start">Start / Enable sound</button>
+    <small>Countdown persists across page loads. Audio will play each second after you click Start (browser gesture required).</small>
+  </div>
 
+  <script>
+    // Config: one month duration (30 days)
+    const MONTH_MS = 30 * 24 * 60 * 60 * 1000;
+    const LS_KEY = 'month_countdown_end';
+    const AUDIO_FILE = 'assets/ezgif-10be97e5f44ce11c_looped_looped (edited with Audjust).mp3';
+
+    // Create audio element
+    const audio = new Audio();
+    // Use raw.githubusercontent url to serve the file directly from this repo
+    const rawBase = 'https://raw.githubusercontent.com/xavierfisher/xavierfisher.github.io/main/';
+    audio.src = encodeURI(rawBase + AUDIO_FILE);
+    audio.preload = 'auto';
+
+    const startBtn = document.getElementById('start');
+    const countEl = document.getElementById('count');
+
+    function getEndTime(){
+      const v = localStorage.getItem(LS_KEY);
+      if(v) return parseInt(v,10);
+      const t = Date.now() + MONTH_MS;
+      localStorage.setItem(LS_KEY, String(t));
+      return t;
+    }
+
+    let endTime = getEndTime();
+
+    function formatRemaining(ms){
+      if(ms <= 0) return null;
+      const s = Math.floor(ms/1000);
+      const days = Math.floor(s / (60*60*24));
+      const hours = Math.floor((s % (60*60*24)) / 3600);
+      const mins = Math.floor((s % 3600) / 60);
+      const secs = s % 60;
+      return `${days} days ${String(hours).padStart(2,'0')}:${String(mins).padStart(2,'0')}:${String(secs).padStart(2,'0')}`;
+    }
+
+    let intervalId = null;
+    let audioEnabled = false; // only play after user gesture
+
+    function tick(){
+      const now = Date.now();
+      const rem = endTime - now;
+      const text = formatRemaining(rem);
+      if(text === null){
+        countEl.textContent = 'Finished';
+        clearInterval(intervalId);
+        return;
+      }
+      countEl.textContent = text;
+
+      // Try to play audio each second if enabled. Some browsers require a user gesture to allow play.
+      if(audioEnabled){
+        // Rewind and play short clip
+        try{
+          audio.currentTime = 0;
+          const p = audio.play();
+          if(p && typeof p.catch === 'function') p.catch(()=>{/* ignore play rejection */});
+        }catch(e){
+          // ignore
+        }
+      }
+    }
+
+    // Start ticking immediately
+    intervalId = setInterval(tick, 1000);
+    tick();
+
+    // Button to enable audio (user gesture)
+    startBtn.addEventListener('click', async ()=>{
+      // If countdown not set, set a new end time from now
+      if(!localStorage.getItem(LS_KEY)){
+        endTime = Date.now() + MONTH_MS;
+        localStorage.setItem(LS_KEY, String(endTime));
+      } else {
+        endTime = parseInt(localStorage.getItem(LS_KEY),10);
+      }
+
+      // Try to play once to satisfy gesture
+      try{
+        await audio.play();
+        audio.pause();
+        audio.currentTime = 0;
+        audioEnabled = true;
+        startBtn.textContent = 'Sound enabled';
+        startBtn.disabled = true;
+      }catch(err){
+        // Playback failed — inform user
+        alert('Browser blocked autoplay. Interactions required for sound. The countdown still runs without sound.');
+      }
+    });
+
+    // If user opens another page and wants to reset countdown, they can clear localStorage from devtools or click this button after modifying code
+
+    // Listen for storage events (optional) so multiple tabs reflect updates
+    window.addEventListener('storage', (e)=>{
+      if(e.key === LS_KEY){
+        endTime = parseInt(e.newValue,10);
+        tick();
+      }
+    });
+
+  </script>
+</body>
+</html>
