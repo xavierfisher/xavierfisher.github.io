@@ -1,0 +1,76 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Centered rounded box with line</title>
+  <style>
+    :root{
+      --box-bg: #dcdcdc;   /* box background (grey) */
+      --line-bg: #bfbfbf;  /* line color (a little darker) */
+      --box-radius: 16px;
+      --box-width: 80%;
+      --box-max-width: 600px;
+      --box-height: 300px;
+      --line-top: 40px;    /* distance from top of box */
+      --line-height: 2px;
+      --box-padding: 16px;
+    }
+
+    html, body { height: 100%; margin: 0; }
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #f7f7f7;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    }
+
+    .box {
+      position: relative;
+      width: var(--box-width);
+      max-width: var(--box-max-width);
+      height: var(--box-height);
+      background: var(--box-bg);
+      border-radius: var(--box-radius);
+      padding: var(--box-padding);
+      box-sizing: border-box;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+      overflow: hidden;
+    }
+
+    /* horizontal line spanning left-to-right inside the box,
+       positioned away from the top */
+    .box__line {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: var(--line-top);
+      height: var(--line-height);
+      background: var(--line-bg);
+      border-radius: 2px;
+      margin: 0 12px; /* slightly inset from box edges if you like */
+    }
+
+    /* optional content styling */
+    .box__content {
+      margin-top: calc(var(--line-top) + 12px);
+      color: #222;
+    }
+
+    /* small-screen tweaks */
+    @media (max-width:420px){
+      :root { --box-height: 220px; --line-top: 32px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="box" role="region" aria-label="Example box">
+    <div class="box__line" aria-hidden="true"></div>
+    <div class="box__content">
+      <!-- Your content goes here -->
+      <p>Content below the line.</p>
+    </div>
+  </div>
+</body>
+</html>
