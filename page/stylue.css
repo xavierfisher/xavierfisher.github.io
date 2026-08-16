@@ -1,1 +1,35 @@
+/* Top sprite bar from page/twitter_web_sprite_bgs.png
+   Shows the second-from-top bar of the sprite at the top of the page.
 
+   NOTE: If the bar doesn't align exactly, adjust the --bar-height and
+   --bar-offset variables below to match the sprite's per-bar height
+   and the vertical offset of the second bar inside twitter_web_sprite_bgs.png.
+*/
+:root{
+  /* Set these to the pixel height of a single bar in the sprite */
+  --bar-height: 50px;    /* adjust this to your sprite bar height */
+  --bar-offset: calc(var(--bar-height) * 1); /* second bar (index 1) */
+}
+
+/* Insert a fixed strip at the top of the page showing the second sprite bar */
+body::before{
+  content: "";
+  display: block;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: var(--bar-height);
+  background-image: url('/xavierfisher/xavierfisher.github.io/page/twitter_web_sprite_bgs.png');
+  background-repeat: no-repeat;
+  /* move the sprite up by the offset to reveal the second bar */
+  background-position: 0 calc(-1 * var(--bar-offset));
+  background-size: auto;
+  z-index: 9999;
+  pointer-events: none; /* allow clicks to pass through if desired */
+}
+
+/* Prevent page content from being covered by the fixed bar */
+body{
+  padding-top: var(--bar-height);
+}
