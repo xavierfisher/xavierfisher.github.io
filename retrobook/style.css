@@ -4,3 +4,9 @@ body {
      background-size: cover;
      background-attachment: fixed;
 }
+a {
+    color: #ffffff; /* Replace with your preferred hex color code */
+}
+a:hover {
+    color: #ffffff; /* Color when a user hovers over the link */
+}
