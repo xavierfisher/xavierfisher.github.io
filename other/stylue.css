@@ -1,7 +1,6 @@
-/* Make assests/wip.png the page background and simplify stylesheet
-   stylue.css is located in the same directory as inbex.html, and the
-   image is at page/assests/wip.png so the relative path below is
-   "assests/wip.png" from this stylesheet's location.
+/* Make wip.png the page background and simplify stylesheet
+   stylue.css is located in the same directory as wip.png, so the
+   relative path is just "wip.png" from this stylesheet's location.
 */
 
 /* Apply wip.png as the page background */
@@ -11,7 +10,7 @@ html, body {
 }
 
 body{
-  /* relative path from page/stylue.css to page/assests/wip.png */
+  /* relative path from other/stylue.css to other/wip.png */
   background-image: url('wip.png');
   background-repeat: no-repeat;
   background-position: center center;
