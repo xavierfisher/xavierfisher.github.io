@@ -12,7 +12,7 @@ html, body {
 
 body{
   /* relative path from page/stylue.css to page/assests/wip.png */
-  background-image: url('assests/wip.png');
+  background-image: url('other/wip.png');
   background-repeat: no-repeat;
   background-position: center center;
   background-size: cover; /* cover the viewport */
