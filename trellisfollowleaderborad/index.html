@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Follower Leaderboard · Trellis</title>
+    <!-- Font Awesome for subtle icons (optional) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: system-ui, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+        }
+
+        body {
+            background: #f4f7fc;
+            padding: 2rem 1rem;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .leaderboard-container {
+            max-width: 1000px;
+            width: 100%;
+            background: white;
+            border-radius: 2rem;
+            box-shadow: 0 20px 35px -8px rgba(0, 0, 0, 0.15);
+            padding: 2rem 1.5rem;
+        }
+
+        h1 {
+            font-size: 2rem;
+            font-weight: 600;
+            color: #0b1b32;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.25rem;
+        }
+
+        h1 i {
+            color: #2a6df4;
+            font-size: 2rem;
+        }
+
+        .subhead {
+            color: #5e6f8d;
+            margin-bottom: 2rem;
+            font-size: 0.95rem;
+            border-left: 4px solid #2a6df4;
+            padding-left: 1rem;
+            background: #eef4ff;
+            border-radius: 0 12px 12px 0;
+            line-height: 1.4;
+            padding: 0.75rem 1rem;
+        }
+
+        .status-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 1.5rem;
+            gap: 1rem;
+        }
+
+        .fetch-info {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: #eef2f6;
+            padding: 0.5rem 1.25rem;
+            border-radius: 40px;
+            font-size: 0.9rem;
+            color: #1d2b44;
+        }
+
+        .fetch-info i {
+            color: #2a6df4;
+        }
+
+        .progress-badge {
+            background: #2a6df4;
+            color: white;
+            padding: 0.25rem 0.9rem;
+            border-radius: 30px;
+            font-weight: 500;
+            font-size: 0.8rem;
+            letter-spacing: 0.3px;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            border-radius: 1.25rem;
+            border: 1px solid #e2e8f0;
+            background: white;
+            margin-top: 0.5rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 500px;
+        }
+
+        th {
+            text-align: left;
+            padding: 1rem 1.25rem;
+            background: #f8fafd;
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #4a5c7a;
+            border-bottom: 1px solid #dde3ed;
+        }
+
+        td {
+            padding: 0.9rem 1.25rem;
+            border-bottom: 1px solid #edf2f7;
+            vertical-align: middle;
+            color: #162b4a;
+            font-weight: 500;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover td {
+            background-color: #fafcff;
+        }
+
+        .rank {
+            font-weight: 700;
+            color: #2a6df4;
+            width: 60px;
+            font-size: 1.1rem;
+        }
+
+        .user-cell {
+            display: flex;
+            align-items: center;
+            gap: 0.9rem;
+        }
+
+        .avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            object-fit: cover;
+            background: #e2e8f0;
+            border: 2px solid white;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.05);
+            flex-shrink: 0;
+        }
+
+        .avatar-placeholder {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: linear-gradient(145deg, #d9e2ef, #cbd5e1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #5b6f8c;
+            font-size: 1.2rem;
+            font-weight: 600;
+            border: 2px solid white;
+            flex-shrink: 0;
+        }
+
+        .username {
+            font-weight: 600;
+            color: #0e1d38;
+            white-space: nowrap;
+        }
+
+        .username a {
+            color: inherit;
+            text-decoration: none;
+            border-bottom: 1px dashed #b7c9e2;
+        }
+
+        .username a:hover {
+            color: #2a6df4;
+            border-bottom-color: #2a6df4;
+        }
+
+        .follower-count {
+            font-weight: 700;
+            color: #1e3a8a;
+            font-size: 1.1rem;
+            letter-spacing: -0.2px;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .follower-count i {
+            color: #f5b342;
+            font-size: 0.9rem;
+        }
+
+        .empty-state,
+        .loading-state {
+            padding: 4rem 2rem;
+            text-align: center;
+            color: #64748b;
+            background: #f9fcff;
+            border-radius: 1.5rem;
+        }
+
+        .loading-state i {
+            font-size: 2.5rem;
+            color: #b7c9e2;
+            margin-bottom: 1rem;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.6; }
+            50% { opacity: 1; }
+            100% { opacity: 0.6; }
+        }
+
+        .error-message {
+            background: #fee9e7;
+            color: #b3402c;
+            padding: 1rem 1.5rem;
+            border-radius: 1rem;
+            margin: 1.5rem 0;
+            font-size: 0.95rem;
+            border-left: 4px solid #d1452e;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .error-message i {
+            font-size: 1.2rem;
+        }
+
+        .refresh-btn {
+            background: white;
+            border: 1px solid #cddae9;
+            color: #1e3a8a;
+            padding: 0.6rem 1.4rem;
+            border-radius: 40px;
+            font-weight: 500;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            transition: 0.2s;
+            margin-top: 1rem;
+        }
+
+        .refresh-btn:hover {
+            background: #eef4ff;
+            border-color: #2a6df4;
+        }
+
+        .refresh-btn i {
+            font-size: 0.9rem;
+        }
+
+        .footnote {
+            margin-top: 2rem;
+            font-size: 0.8rem;
+            color: #7b8ba5;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .footnote i {
+            color: #f5b342;
+        }
+
+        @media (max-width: 600px) {
+            .leaderboard-container {
+                padding: 1.25rem 1rem;
+            }
+            h1 {
+                font-size: 1.5rem;
+            }
+            th, td {
+                padding: 0.75rem 1rem;
+            }
+            .avatar, .avatar-placeholder {
+                width: 36px;
+                height: 36px;
+            }
+            .user-cell {
+                gap: 0.6rem;
+            }
+            .follower-count {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="leaderboard-container">
+        <h1>
+            <i class="fas fa-trophy"></i> Follower Leaderboard
+        </h1>
+        <div class="subhead">
+            <i class="fas fa-chart-line" style="margin-right: 8px;"></i>
+            Users 1 – 300 · ranked by followers (0–9999) · avatars from <code>avatar_(id)*</code>
+        </div>
+
+        <div class="status-bar">
+            <div class="fetch-info">
+                <i class="fas fa-sync-alt fa-spin" id="spinnerIcon" style="display: none;"></i>
+                <i class="fas fa-database" id="staticIcon"></i>
+                <span id="progressText">Loading leaderboard…</span>
+                <span class="progress-badge" id="progressBadge">0/300</span>
+            </div>
+            <button class="refresh-btn" id="refreshBtn">
+                <i class="fas fa-redo-alt"></i> Refresh
+            </button>
+        </div>
+
+        <div id="errorContainer" class="error-message" style="display: none;">
+            <i class="fas fa-exclamation-triangle"></i>
+            <span id="errorText">Failed to load some profiles. Displaying partial data.</span>
+        </div>
+
+        <div class="table-wrapper">
+            <div id="loadingState" class="loading-state">
+                <i class="fas fa-spinner fa-pulse"></i>
+                <p>Fetching follower data… this may take a moment.</p>
+            </div>
+            <table id="leaderboardTable" style="display: none;">
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>User</th>
+                        <th>Followers</th>
+                    </tr>
+                </thead>
+                <tbody id="leaderboardBody">
+                    <!-- dynamic rows -->
+                </tbody>
+            </table>
+            <div id="emptyState" class="empty-state" style="display: none;">
+                <i class="fas fa-users-slash" style="font-size: 2.5rem; margin-bottom: 1rem; color: #b7c9e2;"></i>
+                <p>No users with valid follower counts found.</p>
+            </div>
+        </div>
+
+        <div class="footnote">
+            <span><i class="fas fa-shield-alt"></i> Only counts 0–9999 are ranked</span>
+            <span><i class="fas fa-image"></i> avatars: /dynamic/avatars/avatar_{id}*</span>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            // Configuration
+            const BASE_USER_URL = 'https://trellis.consciousb.one/web/user.php?id=';
+            const AVATAR_BASE = 'https://trellis.consciousb.one/dynamic/avatars/avatar_';
+            const MIN_ID = 1;
+            const MAX_ID = 300;
+            const MAX_FOLLOWERS = 9999;
+            const CONCURRENT_LIMIT = 15;   // avoid overwhelming the server
+
+            // DOM elements
+            const table = document.getElementById('leaderboardTable');
+            const tbody = document.getElementById('leaderboardBody');
+            const loadingState = document.getElementById('loadingState');
+            const emptyState = document.getElementById('emptyState');
+            const progressText = document.getElementById('progressText');
+            const progressBadge = document.getElementById('progressBadge');
+            const errorContainer = document.getElementById('errorContainer');
+            const errorText = document.getElementById('errorText');
+            const refreshBtn = document.getElementById('refreshBtn');
+            const spinnerIcon = document.getElementById('spinnerIcon');
+            const staticIcon = document.getElementById('staticIcon');
+
+            // State
+            let isFetching = false;
+            let usersData = [];        // { id, followers, username, avatarUrl }
+            let failedIds = new Set();
+            let successCount = 0;
+
+            // Helper: show error message
+            function showError(message) {
+                errorText.textContent = message;
+                errorContainer.style.display = 'flex';
+            }
+
+            function hideError() {
+                errorContainer.style.display = 'none';
+            }
+
+            // Set loading state UI
+            function setLoading(active) {
+                if (active) {
+                    loadingState.style.display = 'block';
+                    table.style.display = 'none';
+                    emptyState.style.display = 'none';
+                    spinnerIcon.style.display = 'inline-block';
+                    staticIcon.style.display = 'none';
+                } else {
+                    loadingState.style.display = 'none';
+                    spinnerIcon.style.display = 'none';
+                    staticIcon.style.display = 'inline-block';
+                }
+            }
+
+            // Update progress badge and text
+            function updateProgress(current, total, failedCount = 0) {
+                progressBadge.textContent = `${current}/${total}`;
+                let msg = `Fetched ${current} of ${total} users`;
+                if (failedCount > 0) msg += ` · ${failedCount} failed`;
+                progressText.textContent = msg;
+            }
+
+            // Extract username from HTML (first <b> inside h1 or similar, but we do flexible)
+            function extractUsername(html, fallbackId) {
+                // Try to find <h1> or <h2> with username, or first bold text
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                
+                // Common patterns on Trellis: <h1> or <h2> with username
+                let usernameEl = doc.querySelector('h1, h2, .username, .user-name, .profile-username');
+                if (usernameEl && usernameEl.textContent.trim()) {
+                    return usernameEl.textContent.trim();
+                }
+                
+                // Alternative: find any bold text that looks like a name (not the follower count)
+                const boldTags = doc.querySelectorAll('b, strong');
+                for (let b of boldTags) {
+                    const txt = b.textContent.trim();
+                    // Avoid pure numbers (follower count)
+                    if (txt && !/^\d+$/.test(txt) && txt.length > 1 && txt.length < 50) {
+                        return txt;
+                    }
+                }
+                
+                // Fallback: try title or first heading
+                const title = doc.querySelector('title');
+                if (title && title.textContent.includes('Trellis')) {
+                    const parts = title.textContent.split('·');
+                    if (parts[0] && parts[0].trim() !== 'Trellis' && parts[0].trim() !== 'User not found') {
+                        return parts[0].trim();
+                    }
+                }
+                
+                return `user_${fallbackId}`;
+            }
+
+            // Extract follower count from HTML (looking for the exact pattern)
+            function extractFollowerCount(html) {
+                // Look for <a href="#followersModal" ...><b>(number)</b> followers</a>
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                const anchors = doc.querySelectorAll('a[href="#followersModal"]');
+                for (let a of anchors) {
+                    // Check if it contains "followers" text
+                    if (a.textContent.includes('followers')) {
+                        const bold = a.querySelector('b');
+                        if (bold) {
+                            const numText = bold.textContent.trim().replace(/,/g, '');
+                            const num = parseInt(numText, 10);
+                            if (!isNaN(num)) {
+                                return num;
+                            }
+                        }
+                    }
+                }
+                // fallback: search for any text with "followers" and a number
+                const allText = doc.body?.textContent || '';
+                const match = allText.match(/(\d[\d,]*)\s*followers/i);
+                if (match) {
+                    const num = parseInt(match[1].replace(/,/g, ''), 10);
+                    if (!isNaN(num)) return num;
+                }
+                return null;
+            }
+
+            // Extract avatar URL from HTML (based on provided pattern)
+            function extractAvatarUrl(html, userId) {
+                // Look for img with src containing /dynamic/avatars/avatar_
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                const imgs = doc.querySelectorAll('img');
+                for (let img of imgs) {
+                    const src = img.getAttribute('src');
+                    if (src && src.includes('/dynamic/avatars/avatar_')) {
+                        // Make absolute if relative
+                        if (src.startsWith('http')) return src;
+                        if (src.startsWith('//')) return 'https:' + src;
+                        if (src.startsWith('/')) return 'https://trellis.consciousb.one' + src;
+                        return 'https://trellis.consciousb.one/' + src;
+                    }
+                }
+                // fallback: construct based on pattern, but we don't know the "other text"
+                // we'll return null and use placeholder
+                return null;
+            }
+
+            // Fetch a single user with timeout
+            async function fetchUser(id, timeoutMs = 8000) {
+                const controller = new AbortController();
+                const timeout = setTimeout(() => controller.abort(), timeoutMs);
+                try {
+                    const response = await fetch(`${BASE_USER_URL}${id}`, {
+                        signal: controller.signal,
+                        headers: { 'Accept': 'text/html' }
+                    });
+                    clearTimeout(timeout);
+                    
+                    if (!response.ok) {
+                        // 404 is common for non-existent users; we treat as "no data"
+                        return { id, success: false, reason: `HTTP ${response.status}` };
+                    }
+
+                    const html = await response.text();
+                    
+                    // Quick check if user doesn't exist (content often contains "User not found" or "doesn't exist")
+                    if (html.includes("User not found") || html.includes("doesn't exist") || html.includes("This user doesn't exist")) {
+                        return { id, success: false, reason: 'User not found' };
+                    }
+
+                    const followers = extractFollowerCount(html);
+                    if (followers === null) {
+                        return { id, success: false, reason: 'No follower count found' };
+                    }
+
+                    // Validate range 0-9999
+                    if (followers < 0 || followers > MAX_FOLLOWERS) {
+                        return { id, success: false, reason: `Followers out of range: ${followers}` };
+                    }
+
+                    const username = extractUsername(html, id);
+                    let avatarUrl = extractAvatarUrl(html, id);
+                    
+                    // If no avatar found in HTML, construct a plausible fallback: avatar_{id}something
+                    // Since exact "other text" is unknown, we try avatar_{id}.png or avatar_{id}_default
+                    if (!avatarUrl) {
+                        // Use a generic placeholder; we can't guess the "other text". But we can try common extensions.
+                        // But we respect the instruction: use avatar_(user id)(other text) — but we don't have other text.
+                        // We'll leave as null and show placeholder in UI.
+                        avatarUrl = null;
+                    }
+
+                    return {
+                        id,
+                        success: true,
+                        followers,
+                        username,
+                        avatarUrl
+                    };
+                } catch (err) {
+                    clearTimeout(timeout);
+                    if (err.name === 'AbortError') {
+                        return { id, success: false, reason: 'Timeout' };
+                    }
+                    return { id, success: false, reason: err.message || 'Network error' };
+                }
+            }
+
+            // Fetch all users with concurrency control
+            async function fetchAllUsers() {
+                if (isFetching) return;
+                isFetching = true;
+                hideError();
+                setLoading(true);
+                refreshBtn.disabled = true;
+                
+                // Reset state
+                usersData = [];
+                failedIds.clear();
+                successCount = 0;
+                const total = MAX_ID - MIN_ID + 1;
+                updateProgress(0, total);
+
+                const ids = Array.from({ length: total }, (_, i) => i + MIN_ID);
+                const queue = [...ids];
+                const results = [];
+                let completed = 0;
+                let failedCount = 0;
+
+                // Worker function
+                async function worker() {
+                    while (queue.length > 0) {
+                        const id = queue.shift();
+                        if (id === undefined) break;
+                        const result = await fetchUser(id);
+                        completed++;
+                        
+                        if (result.success) {
+                            results.push(result);
+                            successCount++;
+                        } else {
+                            failedIds.add(id);
+                            failedCount++;
+                            // console.warn(`User ${id} failed: ${result.reason}`);
+                        }
+                        
+                        // Update progress UI
+                        updateProgress(completed, total, failedCount);
+                        
+                        // Slight delay to be polite (optional)
+                        // await new Promise(r => setTimeout(r, 10));
+                    }
+                }
+
+                // Launch workers
+                const workers = Array.from({ length: Math.min(CONCURRENT_LIMIT, total) }, () => worker());
+                await Promise.all(workers);
+
+                // Sort by followers descending
+                results.sort((a, b) => b.followers - a.followers);
+
+                usersData = results;
+                
+                // Render
+                renderLeaderboard(usersData);
+                
+                // Final progress
+                progressBadge.textContent = `${completed}/${total}`;
+                if (failedCount > 0) {
+                    showError(`Completed with ${failedCount} failed requests (users may not exist or have no follower data). Showing ${results.length} valid entries.`);
+                } else {
+                    hideError();
+                }
+                
+                setLoading(false);
+                refreshBtn.disabled = false;
+                isFetching = false;
+            }
+
+            // Render table from data
+            function renderLeaderboard(data) {
+                tbody.innerHTML = '';
+                
+                if (!data || data.length === 0) {
+                    table.style.display = 'none';
+                    emptyState.style.display = 'block';
+                    return;
+                }
+
+                table.style.display = 'table';
+                emptyState.style.display = 'none';
+
+                // Determine rank (handle ties? simple ranking: 1,2,3... but if same followers, we could give same rank, but simpler to assign sequential)
+                let rank = 1;
+                for (let i = 0; i < data.length; i++) {
+                    const user = data[i];
+                    
+                    // For ties, we could assign same rank but we'll just use sequential for clarity.
+                    // However if we want to be precise: if previous has same followers, rank stays same.
+                    if (i > 0 && data[i].followers === data[i-1].followers) {
+                        // same rank as previous
+                    } else {
+                        rank = i + 1;
+                    }
+                    
+                    const tr = document.createElement('tr');
+                    
+                    // Rank cell
+                    const rankTd = document.createElement('td');
+                    rankTd.className = 'rank';
+                    rankTd.textContent = rank;
+                    tr.appendChild(rankTd);
+                    
+                    // User cell (avatar + username)
+                    const userTd = document.createElement('td');
+                    const userDiv = document.createElement('div');
+                    userDiv.className = 'user-cell';
+                    
+                    // Avatar
+                    let avatarElement;
+                    if (user.avatarUrl) {
+                        avatarElement = document.createElement('img');
+                        avatarElement.className = 'avatar';
+                        avatarElement.src = user.avatarUrl;
+                        avatarElement.alt = `${user.username}'s avatar`;
+                        avatarElement.onerror = function() {
+                            // replace with placeholder on error
+                            const parent = this.parentNode;
+                            const placeholder = document.createElement('div');
+                            placeholder.className = 'avatar-placeholder';
+                            placeholder.innerHTML = '<i class="fas fa-user"></i>';
+                            parent.replaceChild(placeholder, this);
+                        };
+                    } else {
+                        // placeholder div
+                        avatarElement = document.createElement('div');
+                        avatarElement.className = 'avatar-placeholder';
+                        avatarElement.innerHTML = '<i class="fas fa-user"></i>';
+                    }
+                    
+                    const nameSpan = document.createElement('span');
+                    nameSpan.className = 'username';
+                    // Make it a link to user profile
+                    const link = document.createElement('a');
+                    link.href = `${BASE_USER_URL}${user.id}`;
+                    link.target = '_blank';
+                    link.rel = 'noopener noreferrer';
+                    link.textContent = user.username || `user_${user.id}`;
+                    nameSpan.appendChild(link);
+                    
+                    userDiv.appendChild(avatarElement);
+                    userDiv.appendChild(nameSpan);
+                    userTd.appendChild(userDiv);
+                    tr.appendChild(userTd);
+                    
+                    // Followers cell
+                    const followerTd = document.createElement('td');
+                    const followerDiv = document.createElement('div');
+                    followerDiv.className = 'follower-count';
+                    followerDiv.innerHTML = `<i class="fas fa-user"></i> ${user.followers.toLocaleString()}`;
+                    followerTd.appendChild(followerDiv);
+                    tr.appendChild(followerTd);
+                    
+                    tbody.appendChild(tr);
+                }
+            }
+
+            // Initial load and refresh handler
+            function loadLeaderboard() {
+                fetchAllUsers().catch(err => {
+                    console.error('Unexpected error:', err);
+                    showError('An unexpected error occurred. Please try again.');
+                    setLoading(false);
+                    refreshBtn.disabled = false;
+                    isFetching = false;
+                });
+            }
+
+            // Event listener
+            refreshBtn.addEventListener('click', loadLeaderboard);
+
+            // Start on page load
+            window.addEventListener('DOMContentLoaded', loadLeaderboard);
+        })();
+    </script>
+</body>
+</html>
