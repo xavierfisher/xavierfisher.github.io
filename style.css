@@ -1,14 +1,10 @@
-body { 
-     background-color: #2b2b2b;
-     background-image: url('https://xavierfisher.uk/assets/backrounds/pexels-andreas-schnabl-1775843-19487036.jpg');
-     background-size: cover;
-     background-attachment: fixed;
+body 
 }
 a {
-    color: #ffffff; /* Replace with your preferred hex color code */
+    color: #ffffff; 
 }
 a:hover {
-    color: #ffffff; /* Color when a user hovers over the link */
+    color: #ffffff;
 }
 p, h1, h2, h3, h4, h5, h6 {
   color: black;
