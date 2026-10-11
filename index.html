@@ -16,42 +16,7 @@
     p
     h1, h2, h3, h4, h5, h6 {
   color: black;
-    }
-
-
-
-        
-      html, body {
-    margin: 0;
-    padding: 0;
-    height: 100%;
-    overflow: hidden;
-    background: #fff;
-  }
-
-  #wallpaper {
-    position: fixed;
-    inset: 0;
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    opacity: 1;
-    transition: opacity 0.5s ease;
-  }
-
-  /* White overlay used for the fade-to-white transition */
-  #fade {
-    position: fixed;
-    inset: 0;
-    background: #fff;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.5s ease;
-  }
-
-
-        
-        
+    }    
     </style>
  <head>
     <div align="center">
@@ -70,63 +35,6 @@
     <a href="https://consciousb.one/"><img src="https://consciousb.one/assets/88x31/cbone.png" height="31"></a>
     <a href="https://rynizx.xyz"><img src="https://rynizx.xyz/ryniButton.gif" alt="ryni button"></a>
     <a href="https://preloading.dev"><img src="https://preloading.dev/static/images/button.gif" alt="it's a website button for preloading.dev. It's a blue button, with a nyan cat to the left, and the text preloading.dev"></a></footer>
-
-<script>
-  // 10 wallpaper URLs — replace these with your own images
-  const wallpapers = [
-    "xavierfisher.uk/wallpapers/wallhaven-3kpy56.jpg",
-    "xavierfisher.uk/wallpapers/wallhaven-d6g8zg.jpg",
-    "xavierfisher.uk/wallpapers/wallhaven-kw9yp6.jpg",
-    "xavierfisher.uk/wallpapers/wallhaven-m31jo8.jpg",
-    "xavierfisher.uk/wallpapers/wallhaven-m3dgjm.jpg",
-    "xavierfisher.uk/wallpapers/wallhaven-o55yom.jpg",
-    "xavierfisher.uk/wallpapers/wallhaven-mpyly8.jpg",
-    "xavierfisher.uk/wallpapers/wallhaven-vqqzo8.jpg",
-    "xavierfisher.uk/wallpapers/wallhaven-weq1xp.jpg",
-    "xavierfisher.uk/wallpapers/wallhaven-zym9ej.jpg"
-  ];
-
-  const wallpaperEl = document.getElementById("wallpaper");
-  const fadeEl = document.getElementById("fade");
-
-  const FADE_MS = 500;       // 0.5 seconds fade
-  const DISPLAY_MS = 15000;  // 15 seconds per wallpaper
-
-  let index = 0;
-
-  // Preload images so transitions are smooth
-  wallpapers.forEach(src => {
-    const img = new Image();
-    img.src = src;
-  });
-
-  function showWallpaper(i) {
-    wallpaperEl.style.backgroundImage = `url("${wallpapers[i]}")`;
-  }
-
-  function cycle() {
-    // Fade to white
-    fadeEl.style.opacity = 1;
-
-    // After fade completes, swap the wallpaper and fade back from white
-    setTimeout(() => {
-      index = (index + 1) % wallpapers.length;
-      showWallpaper(index);
-
-      // Small delay so the new image is painted before fading out the white
-      requestAnimationFrame(() => {
-        fadeEl.style.opacity = 0;
-      });
-    }, FADE_MS);
-
-    // Schedule the next cycle: 15s display + 0.5s fade (the fade overlaps display start)
-    setTimeout(cycle, DISPLAY_MS);
-  }
-
-  // Start with the first wallpaper, then begin cycling
-  showWallpaper(index);
-  setTimeout(cycle, DISPLAY_MS);
-</script>
         
 </div>
 </html>
