@@ -1,0 +1,22 @@
+body {
+  margin: 0;
+  height: 100vh;
+  background-color: #000;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+a {
+  color: #ffffff;
+}
+
+a:hover {
+  color: #ffffff;
+}
+
+p, h1, h2, h3, h4, h5, h6 {
+  color: black;
+}
