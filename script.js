@@ -1,5 +1,5 @@
 (function () {
-  const wallpapers = [
+  var wallpapers = [
     "https://xavierfisher.uk/wallpapers/wallhaven-3kpy56.jpg",
     "https://xavierfisher.uk/wallpapers/wallhaven-d6g8zg.jpg",
     "https://xavierfisher.uk/wallpapers/wallhaven-kw9yp6.jpg",
@@ -12,49 +12,48 @@
     "https://xavierfisher.uk/wallpapers/wallhaven-zym9ej.jpg"
   ];
 
-  const FADE_MS = 500;
-  const DISPLAY_MS = 7000;
+  var FADE_MS = 500;
+  var DISPLAY_MS = 7000;
 
-  const style = document.createElement("style");
-  style.textContent = `
-    #wallpaper {
-      position: fixed;
-      inset: 0;
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
-      z-index: -2;
-    }
-    #fade {
-      position: fixed;
-      inset: 0;
-      background: #fff;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity ${FADE_MS}ms ease;
-      z-index: -1;
-    }
-  `;
+  var style = document.createElement("style");
+  style.textContent =
+    "#wallpaper {" +
+    "  position: fixed;" +
+    "  inset: 0;" +
+    "  background-size: cover;" +
+    "  background-position: center;" +
+    "  background-repeat: no-repeat;" +
+    "  z-index: -2;" +
+    "}" +
+    "#fade {" +
+    "  position: fixed;" +
+    "  inset: 0;" +
+    "  background: #fff;" +
+    "  opacity: 0;" +
+    "  pointer-events: none;" +
+    "  transition: opacity " + FADE_MS + "ms ease;" +
+    "  z-index: -1;" +
+    "}";
   document.head.appendChild(style);
 
-  const wallpaperEl = document.createElement("div");
+  var wallpaperEl = document.createElement("div");
   wallpaperEl.id = "wallpaper";
-  const fadeEl = document.createElement("div");
+  var fadeEl = document.createElement("div");
   fadeEl.id = "fade";
 
-  function init() {
-    document.body.prepend(fadeEl);
-    document.body.prepend(wallpaperEl);
+  function start() {
+    document.body.insertBefore(fadeEl, document.body.firstChild);
+    document.body.insertBefore(wallpaperEl, document.body.firstChild);
 
-    let currentIndex = -1;
+    var currentIndex = -1;
 
-    wallpapers.forEach(src => {
-      const img = new Image();
-      img.src = src;
-    });
+    for (var i = 0; i < wallpapers.length; i++) {
+      var img = new Image();
+      img.src = wallpapers[i];
+    }
 
     function pickRandomIndex() {
-      let next = Math.floor(Math.random() * wallpapers.length);
+      var next = Math.floor(Math.random() * wallpapers.length);
       while (next === currentIndex && wallpapers.length > 1) {
         next = Math.floor(Math.random() * wallpapers.length);
       }
@@ -62,17 +61,17 @@
     }
 
     function showWallpaper(i) {
-      wallpaperEl.style.backgroundImage = `url("${wallpapers[i]}")`;
+      wallpaperEl.style.backgroundImage = 'url("' + wallpapers[i] + '")';
     }
 
     function cycle() {
       fadeEl.style.opacity = 1;
 
-      setTimeout(() => {
+      setTimeout(function () {
         currentIndex = pickRandomIndex();
         showWallpaper(currentIndex);
 
-        requestAnimationFrame(() => {
+        requestAnimationFrame(function () {
           fadeEl.style.opacity = 0;
         });
       }, FADE_MS);
@@ -86,8 +85,8 @@
   }
 
   if (document.body) {
-    init();
+    start();
   } else {
-    document.addEventListener("DOMContentLoaded", init);
+    document.addEventListener("DOMContentLoaded", start);
   }
 })();
