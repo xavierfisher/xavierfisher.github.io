@@ -11,7 +11,7 @@
     'use strict';
 
     // ---------- Config ----------
-    var PROXY = ''; // <-- set to your proxy prefix if CORS blocks direct fetch
+    var PROXY = 'https://xavierfisher.uk/trellisfollowleaderboard/assets/proxy.php?url=';
     var BASE_URL = 'https://trellis.consciousb.one/web/user.php?id=';
     var AVATAR_BASE = 'https://trellis.consciousb.one/dynamic/avatars/avatar_';
     var MIN_ID = 1;
