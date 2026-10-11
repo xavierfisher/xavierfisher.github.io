@@ -16,7 +16,26 @@
     p
     h1, h2, h3, h4, h5, h6 {
   color: black;
-    }    
+    }
+
+    /* Wallpaper layers — sit behind everything */
+    #wallpaper {
+      position: fixed;
+      inset: 0;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      z-index: -2;
+    }
+    #fade {
+      position: fixed;
+      inset: 0;
+      background: #fff;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.5s ease;
+      z-index: -1;
+    }
     </style>
  <head>
     <div align="center">
@@ -24,6 +43,9 @@
     </div>
 </head>
 <body>
+    <div id="wallpaper"></div>
+    <div id="fade"></div>
+
     <div align="center">
     <h2>\/\/\/ buttons \/\/\/</h2>
 </body>
@@ -37,4 +59,62 @@
     <a href="https://preloading.dev"><img src="https://preloading.dev/static/images/button.gif" alt="it's a website button for preloading.dev. It's a blue button, with a nyan cat to the left, and the text preloading.dev"></a></footer>
         
 </div>
+
+<script>
+  
+  const wallpapers = [
+    "https://picsum.photos/id/1015/1920/1080",
+    "https://picsum.photos/id/1016/1920/1080",
+    "https://picsum.photos/id/1018/1920/1080",
+    "https://picsum.photos/id/1019/1920/1080",
+    "https://picsum.photos/id/1020/1920/1080",
+    "https://picsum.photos/id/1021/1920/1080",
+    "https://picsum.photos/id/1022/1920/1080",
+    "https://picsum.photos/id/1023/1920/1080",
+    "https://picsum.photos/id/1024/1920/1080",
+    "https://picsum.photos/id/1025/1920/1080"
+  ];
+
+  const wallpaperEl = document.getElementById("wallpaper");
+  const fadeEl = document.getElementById("fade");
+
+  const FADE_MS = 500;     
+  const DISPLAY_MS = 7000;  
+
+  let index = 0;
+
+  
+  wallpapers.forEach(src => {
+    const img = new Image();
+    img.src = src;
+  });
+
+  function showWallpaper(i) {
+    wallpaperEl.style.backgroundImage = `url("${wallpapers[i]}")`;
+  }
+
+  function cycle() {
+    
+    fadeEl.style.opacity = 1;
+
+    
+    setTimeout(() => {
+      index = (index + 1) % wallpapers.length;
+      showWallpaper(index);
+
+      
+      requestAnimationFrame(() => {
+        fadeEl.style.opacity = 0;
+      });
+    }, FADE_MS);
+
+    
+    setTimeout(cycle, DISPLAY_MS);
+  }
+
+ 
+  showWallpaper(index);
+  setTimeout(cycle, DISPLAY_MS);
+</script>
+
 </html>
