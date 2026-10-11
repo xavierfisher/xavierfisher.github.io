@@ -39,6 +39,13 @@ body {
   background-repeat: no-repeat;
   background-color: #000;
   animation: wallpaperSlide 75s infinite;
+  display: flex;         
+  justify-content: center;
+  align-items: center;       
+  height: 100vh;         
+  margin: 0;             
+  flex-direction: column;
+  text-align: center;
 }
 
 a {
