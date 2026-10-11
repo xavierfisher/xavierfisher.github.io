@@ -2,18 +2,23 @@
  * Trellis Follower Leaderboard
  * Fetches users 1–300, extracts follower counts, avatars, and usernames,
  * then renders a ranked leaderboard with JSON/CSV export.
+ *
+ * If you hit CORS errors, set PROXY below to your own proxy endpoint.
+ * Example proxy: "https://xavierfisher.uk/trellisfollowleaderborad/assets/proxy.php?url="
+ * Leave PROXY as "" to fetch directly (only works if CORS allows it).
  */
 (function () {
     'use strict';
 
     // ---------- Config ----------
+    var PROXY = ''; // <-- set to your proxy prefix if CORS blocks direct fetch
     var BASE_URL = 'https://trellis.consciousb.one/web/user.php?id=';
     var AVATAR_BASE = 'https://trellis.consciousb.one/dynamic/avatars/avatar_';
     var MIN_ID = 1;
     var MAX_ID = 300;
     var MAX_FOLLOWERS = 9999;
     var CONCURRENCY = 15;
-    var TIMEOUT_MS = 10000;
+    var TIMEOUT_MS = 12000;
     var RETRIES = 2;
 
     // ---------- DOM ----------
@@ -30,13 +35,17 @@
     var leaderboard = [];
     var isFetching = false;
 
-    // ---------- Helpers ----------
+    // ---------- Networking ----------
+    function buildUrl(target) {
+        return PROXY ? (PROXY + encodeURIComponent(target)) : target;
+    }
+
     function fetchTimeout(url, ms) {
         var ctrl = new AbortController();
         var timer = setTimeout(function () { ctrl.abort(); }, ms);
         return fetch(url, {
             signal: ctrl.signal,
-            headers: { 'Accept': 'text/html' }
+            headers: { 'Accept': 'text/html,application/xhtml+xml' }
         }).finally(function () { clearTimeout(timer); });
     }
 
@@ -47,32 +56,44 @@
                 return await fetchTimeout(url, TIMEOUT_MS);
             } catch (e) {
                 lastErr = e;
-                if (i < RETRIES - 1) await new Promise(function (r) { setTimeout(r, 400); });
+                if (i < RETRIES - 1) {
+                    await new Promise(function (r) { setTimeout(r, 400); });
+                }
             }
         }
         throw lastErr;
     }
 
+    // ---------- Parsing ----------
     function parseUsername(html, id) {
         var doc = new DOMParser().parseFromString(html, 'text/html');
-        var selectors = ['h1', 'h2', '.username', '.user-name', '.profile-username', '[class*="username"]'];
+
+        var selectors = [
+            'h1', 'h2', '.username', '.user-name', '.profile-username',
+            '[class*="username"]', '[class*="user-name"]'
+        ];
         for (var i = 0; i < selectors.length; i++) {
             var el = doc.querySelector(selectors[i]);
             if (el && el.textContent.trim() && el.textContent.trim().length < 60) {
                 return el.textContent.trim();
             }
         }
+
         var bolds = doc.querySelectorAll('b, strong');
         for (var j = 0; j < bolds.length; j++) {
             var t = bolds[j].textContent.trim();
             if (t && !/^\d+$/.test(t) && t.length > 1 && t.length < 50) return t;
         }
+
         var title = doc.querySelector('title');
         if (title) {
             var parts = title.textContent.split(/[·\-|]/);
             for (var k = 0; k < parts.length; k++) {
                 var p = parts[k].trim();
-                if (p && p !== 'Trellis' && p.toLowerCase().indexOf('user not found') === -1) return p;
+                if (p && p !== 'Trellis' &&
+                    p.toLowerCase().indexOf('user not found') === -1) {
+                    return p;
+                }
             }
         }
         return 'user_' + id;
@@ -80,6 +101,8 @@
 
     function parseFollowers(html) {
         var doc = new DOMParser().parseFromString(html, 'text/html');
+
+        // Primary: <a href="#followersModal" ...><b>NUMBER</b> followers</a>
         var anchors = doc.querySelectorAll('a[href="#followersModal"]');
         for (var i = 0; i < anchors.length; i++) {
             var a = anchors[i];
@@ -95,6 +118,8 @@
                 if (!isNaN(n2)) return n2;
             }
         }
+
+        // Fallback: any "NUMBER followers" in body text
         var body = doc.body ? doc.body.textContent : '';
         var match = body.match(/(\d[\d,]*)\s*followers?/i);
         if (match) {
@@ -116,28 +141,37 @@
                 return 'https://trellis.consciousb.one/' + src;
             }
         }
+        // Fallback: construct from known pattern
         return AVATAR_BASE + id + '.png';
     }
 
     // ---------- Fetch one user ----------
     async function fetchUser(id) {
-        var url = BASE_URL + id;
+        var target = BASE_URL + id;
+        var url = buildUrl(target);
+
         var res;
         try {
             res = await fetchWithRetry(url);
         } catch (e) {
-            return { id: id, ok: false };
+            return { id: id, ok: false, reason: 'network' };
         }
-        if (!res.ok) return { id: id, ok: false };
+        if (!res.ok) {
+            return { id: id, ok: false, reason: 'http ' + res.status };
+        }
 
         var html = await res.text();
+
         if (/user\s+not\s+found|doesn'?t\s+exist/i.test(html)) {
-            return { id: id, ok: false };
+            return { id: id, ok: false, reason: 'not found' };
         }
 
         var followers = parseFollowers(html);
-        if (followers === null || followers < 0 || followers > MAX_FOLLOWERS) {
-            return { id: id, ok: false };
+        if (followers === null) {
+            return { id: id, ok: false, reason: 'no followers' };
+        }
+        if (followers < 0 || followers > MAX_FOLLOWERS) {
+            return { id: id, ok: false, reason: 'range' };
         }
 
         return {
@@ -146,7 +180,7 @@
             followers: followers,
             username: parseUsername(html, id),
             avatar: parseAvatar(html, id),
-            profile: url
+            profile: target
         };
     }
 
@@ -173,14 +207,18 @@
         }
 
         var workers = [];
-        for (var w = 0; w < Math.min(CONCURRENCY, total); w++) workers.push(worker());
+        for (var w = 0; w < Math.min(CONCURRENCY, total); w++) {
+            workers.push(worker());
+        }
         await Promise.all(workers);
 
+        // Sort: followers desc, then id asc
         results.sort(function (a, b) {
             if (b.followers !== a.followers) return b.followers - a.followers;
             return a.id - b.id;
         });
 
+        // Rank with ties
         var last = null, rank = 0;
         results.forEach(function (u, idx) {
             if (u.followers !== last) {
@@ -222,7 +260,7 @@
                     var ph = document.createElement('span');
                     ph.className = 'avatar-placeholder';
                     ph.textContent = '?';
-                    this.parentNode.replaceChild(ph, this);
+                    if (this.parentNode) this.parentNode.replaceChild(ph, this);
                 };
                 tdUser.appendChild(img);
             } else {
@@ -261,30 +299,37 @@
         URL.revokeObjectURL(url);
     }
 
-    jsonBtn.addEventListener('click', function () {
-        if (!leaderboard.length) return;
-        var out = leaderboard.map(function (u) {
-            return {
-                rank: u.rank,
-                id: u.id,
-                username: u.username,
-                followers: u.followers,
-                avatar: u.avatar,
-                profile: u.profile
-            };
+    if (jsonBtn) {
+        jsonBtn.addEventListener('click', function () {
+            if (!leaderboard.length) return;
+            var out = leaderboard.map(function (u) {
+                return {
+                    rank: u.rank,
+                    id: u.id,
+                    username: u.username,
+                    followers: u.followers,
+                    avatar: u.avatar,
+                    profile: u.profile
+                };
+            });
+            download(JSON.stringify(out, null, 2), 'leaderboard.json', 'application/json');
         });
-        download(JSON.stringify(out, null, 2), 'leaderboard.json', 'application/json');
-    });
+    }
 
-    csvBtn.addEventListener('click', function () {
-        if (!leaderboard.length) return;
-        function esc(s) { return '"' + String(s).replace(/"/g, '""') + '"'; }
-        var lines = ['rank,id,username,followers,avatar,profile'];
-        leaderboard.forEach(function (u) {
-            lines.push([u.rank, u.id, esc(u.username), u.followers, esc(u.avatar), esc(u.profile)].join(','));
+    if (csvBtn) {
+        csvBtn.addEventListener('click', function () {
+            if (!leaderboard.length) return;
+            function esc(s) { return '"' + String(s).replace(/"/g, '""') + '"'; }
+            var lines = ['rank,id,username,followers,avatar,profile'];
+            leaderboard.forEach(function (u) {
+                lines.push([
+                    u.rank, u.id, esc(u.username), u.followers,
+                    esc(u.avatar), esc(u.profile)
+                ].join(','));
+            });
+            download(lines.join('\n'), 'leaderboard.csv', 'text/csv');
         });
-        download(lines.join('\n'), 'leaderboard.csv', 'text/csv');
-    });
+    }
 
     // ---------- Main load ----------
     async function load() {
