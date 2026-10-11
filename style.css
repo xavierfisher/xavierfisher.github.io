@@ -1,59 +1,22 @@
-@keyframes wallpaperSlide {
-  0%, 9% {
-    background-image: url("https://xavierfisher.uk/wallpapers/wallhaven-3kpy56.jpg");
-  }
-  10%, 19% {
-    background-image: url("https://xavierfisher.uk/wallpapers/wallhaven-d6g8zg.jpg");
-  }
-  20%, 29% {
-    background-image: url("https://xavierfisher.uk/wallpapers/wallhaven-kw9yp6.jpg");
-  }
-  30%, 39% {
-    background-image: url("https://xavierfisher.uk/wallpapers/wallhaven-m31jo8.jpg");
-  }
-  40%, 49% {
-    background-image: url("https://xavierfisher.uk/wallpapers/wallhaven-m3dgjm.jpg");
-  }
-  50%, 59% {
-    background-image: url("https://xavierfisher.uk/wallpapers/wallhaven-o55yom.jpg");
-  }
-  60%, 69% {
-    background-image: url("https://xavierfisher.uk/wallpapers/wallhaven-mpyly8.jpg");
-  }
-  70%, 79% {
-    background-image: url("https://xavierfisher.uk/wallpapers/wallhaven-vqqzo8.jpg");
-  }
-  80%, 89% {
-    background-image: url("https://xavierfisher.uk/wallpapers/wallhaven-weq1xp.jpg");
-  }
-  90%, 100% {
-    background-image: url("https://xavierfisher.uk/wallpapers/wallhaven-zym9ej.jpg");
-  }
-}
-
 body {
   margin: 0;
   height: 100vh;
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
   background-color: #000;
-  animation: wallpaperSlide 75s infinite;
-  display: flex;         
-  justify-content: center;
-  align-items: center;       
-  height: 100vh;         
-  margin: 0;             
+  display: flex;
   flex-direction: column;
+  justify-content: center;
+  align-items: center;
   text-align: center;
 }
 
 a {
-    color: #ffffff; 
+  color: #ffffff;
 }
+
 a:hover {
-    color: #ffffff;
+  color: #ffffff;
 }
+
 p, h1, h2, h3, h4, h5, h6 {
   color: black;
-} 
+}
