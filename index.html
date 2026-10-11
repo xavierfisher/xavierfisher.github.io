@@ -17,6 +17,41 @@
     h1, h2, h3, h4, h5, h6 {
   color: black;
     }
+
+
+
+        
+      html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow: hidden;
+    background: #fff;
+  }
+
+  #wallpaper {
+    position: fixed;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    opacity: 1;
+    transition: opacity 0.5s ease;
+  }
+
+  /* White overlay used for the fade-to-white transition */
+  #fade {
+    position: fixed;
+    inset: 0;
+    background: #fff;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s ease;
+  }
+
+
+        
+        
     </style>
  <head>
     <div align="center">
