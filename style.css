@@ -25,4 +25,10 @@ div.button-container {
   background-image: url('https://xavierfisher.github.io/assets/button/buttonbg.png');
   background-size: cover;
   background-position: center;
+  padding: 20px;
+  border-radius: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
 }
