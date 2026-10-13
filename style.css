@@ -13,6 +13,19 @@ body {
   margin: 0;
   padding: 0;
 
+   .info-bg {
+    position: absolute;
+    place-items: center;
+    margin: 0;
+    width: 575px;
+    height: 300px;
+    z-index: -1;
+    border: 1px solid #000;
+   }
+
+
+
+
 
 }
 
@@ -25,7 +38,7 @@ a:hover {
 }
 
 h1, h2, h3, h4, h5, h6 {
-  color: black;
+  color: white;
 }
 
 div.button-container {
@@ -68,3 +81,4 @@ height: 31px;
 
   
 }
+
