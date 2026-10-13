@@ -8,6 +8,12 @@ body {
   align-items: center;
   text-align: center;
   font-family: billabong, sans-serif;
+
+  
+  margin: 0;
+  padding: 0;
+
+
 }
 
 a {
@@ -37,8 +43,13 @@ div.button-container-and-tag {
 
 }
 
-div.big div {
-  width: 500px;
-  height: 500px;
-}
+.navbar {
 
+position: fixed;
+top: 0px;
+left: 0px;
+right: 0px;
+margin: 0;
+width: 100vw;
+height: 45px;
+}
