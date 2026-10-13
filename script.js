@@ -9,7 +9,18 @@
     "https://xavierfisher.uk/wallpapers/wallhaven-mpyly8.jpg",
     "https://xavierfisher.uk/wallpapers/wallhaven-vqqzo8.jpg",
     "https://xavierfisher.uk/wallpapers/wallhaven-weq1xp.jpg",
-    "https://xavierfisher.uk/wallpapers/wallhaven-zym9ej.jpg"
+    "https://xavierfisher.uk/wallpapers/wallhaven-zym9ej.jpg",
+    "https://xavierfisher.uk/wallpapers/wallhaven-1jd7g1.jpg",
+    "https://xavierfisher.uk/wallpapers/wallhaven-1krzww.jpg",
+    "https://xavierfisher.uk/wallpapers/wallhaven-3lze93.jpg",
+    "https://xavierfisher.uk/wallpapers/wallhaven-4l7qmr.jpg",
+    "https://xavierfisher.uk/wallpapers/wallhaven-4yq7pd.jpg",
+    "https://xavierfisher.uk/wallpapers/wallhaven-45rdz3.jpg",
+    "https://xavierfisher.uk/wallpapers/wallhaven-85j9oj.jpg",
+    "https://xavierfisher.uk/wallpapers/wallhaven-95v7jw.jpg",
+    "https://xavierfisher.uk/wallpapers/wallhaven-g813gq.jpg",
+    "https://xavierfisher.uk/wallpapers/wallhaven-jx37wq.jpg",
+    "https://xavierfisher.uk/wallpapers/wallhaven-v916jp.jpg"
   ];
 
   var FADE_MS = 500;
