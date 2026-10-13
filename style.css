@@ -54,3 +54,15 @@ width: 100vw;
 height: 45px;
 border-bottom: 1px solid #000;
 }
+
+div.stuff-on-the-navbar {
+
+img {
+position: absolute;
+top: 7px;
+left: 10px;
+height: 31px;
+}
+
+  
+}
