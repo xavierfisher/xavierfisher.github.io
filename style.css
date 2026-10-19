@@ -64,6 +64,8 @@ div.button-container-and-tag {
     height: 100vh;   
     border: none;
     z-index: 99999;  
+    pointer-events: auto !important;
+    isolation: isolate !important;
 }
 
 
