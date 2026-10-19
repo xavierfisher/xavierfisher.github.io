@@ -57,13 +57,13 @@ div.button-container-and-tag {
 }
 
     iframe {
-    position: fixed; /* Keeps it locked in place over the viewport */
+    position: fixed; 
     top: 0;
     left: 0;
-    width: 100vw;    /* 100% of the viewport width */
-    height: 100vh;   /* 100% of the viewport height */
+    width: 100vw;    
+    height: 100vh;   
     border: none;
-    z-index: 99999;  /* Forces it to the absolute top layer */
+    z-index: 99999;  
 }
 
 
