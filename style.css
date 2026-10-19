@@ -56,29 +56,14 @@ div.button-container-and-tag {
 
 }
 
-.navbar {
-
-position: fixed;
-top: 0px;
-left: 0px;
-right: 0px;
-margin: 0;
-width: 100vw;
-height: 45px;
-border-bottom: 1px solid #000;
+    iframe {
+    position: fixed; /* Keeps it locked in place over the viewport */
+    top: 0;
+    left: 0;
+    width: 100vw;    /* 100% of the viewport width */
+    height: 100vh;   /* 100% of the viewport height */
+    border: none;
+    z-index: 99999;  /* Forces it to the absolute top layer */
 }
 
-div.stuff-on-the-navbar {
-
-img {
-position: absolute;
-top: 7px;
-left: 10px;
-height: 31px;
-}
-
-// test
-
-  
-}
 
