@@ -1,0 +1,26 @@
+div.navbar {
+
+img {    
+position: fixed;
+top: 0px;
+left: 0px;
+right: 0px;
+margin: 0;
+width: 100vw;
+height: 45px;
+border-bottom: 1px solid #000;
+}
+
+}
+
+div.stuff-on-the-navbar {
+
+img {
+position: absolute;
+top: 7px;
+left: 10px;
+height: 31px;
+}
+ 
+}
+
