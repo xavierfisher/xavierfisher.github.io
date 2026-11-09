@@ -100,7 +100,7 @@ img {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  height: 300px;
+  height: 475px;
   width: 575px;
   z-index: -1;
   border: 1px solid #000;
@@ -123,5 +123,20 @@ img {
   border: 1px solid #000;
 
 }
+
+}
+
+img.pfp {
+  border: 1px solid #000;
+  height: 90px;
+  width: 102px;
+
+}
+
+div.homepageinfo {
+
+  h3, p {
+    color: #ffffff;
+  }
 
 }
