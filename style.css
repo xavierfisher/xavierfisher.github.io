@@ -8,10 +8,9 @@ body {
   align-items: center;
   text-align: center;
   font-family: billabong, sans-serif;
-
-  
   margin: 0;
   padding: 0;
+}
 
    .info-bg {
     position: absolute;
@@ -103,6 +102,23 @@ img {
   transform: translate(-50%, -50%);
   height: 300px;
   width: 575px;
+  z-index: -1;
+  border: 1px solid #000;
+
+}
+
+}
+
+div.buttonbg {
+
+img {
+
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  height: 200px;
+  width: 725px;
   z-index: -1;
   border: 1px solid #000;
 
