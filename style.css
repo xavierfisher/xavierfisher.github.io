@@ -71,7 +71,7 @@ div.button-container-and-tag {
 div.stuff-on-the-navbar {
 
 img {
-position: absolute;
+position: fixed;
 top: 7px;
 left: 10px;
 height: 31px;
@@ -138,5 +138,27 @@ div.homepageinfo {
   h3, p {
     color: #ffffff;
   }
+
+}
+
+div.aboutme {
+
+img {
+
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  height: 90px;
+  width: 200px;
+  z-index: -1;
+  border: 1px solid #000;
+
+}
+
+h1, p {
+  color: #ffffff;
+
+}
 
 }
